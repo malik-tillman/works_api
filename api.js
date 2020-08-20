@@ -17,20 +17,6 @@ db.sequelize.sync({ force: false }).then(() => {
 
 // ----- Root route
 
-/**
- * Returns metadata pertaining to the API based on the METADATA model, such as health and analytics.
- * */
-app.get('/', (req, res) => {
-    res.send('Returns metadata pertaining to API, such as health.');
-})
-
-/**
- * Tells the api to update the root route metadata.
- * */
-app.patch('/', (req, res) => {
-    res.send(`Updates API's metadata.`);
-})
-
 // ----- Works list route
 
 /**
@@ -94,6 +80,20 @@ app.delete('/works?/:id', (req, res) => {
 })
 
 /**
+ * Returns metadata pertaining to the API based on the METADATA model, such as health and analytics.
+ * */
+app.get('/', (req, res) => {
+    res.send('Returns metadata pertaining to API, such as health.');
+})
+
+/**
+ * Tells the api to update the root route metadata.
+ * */
+app.patch('/', (req, res) => {
+    res.send(`Updates API's metadata.`);
+})
+
+/**
  * Listen for connections
  * */
 app.listen(3000, () => {
@@ -109,14 +109,32 @@ async function getWork(id) {
 }
 
 async function getWorksList(type) {
+    const _attributes = [
+        'id',
+        'hidden',
+        'name',
+        'category',
+        'tags',
+        'github',
+        'behance',
+        'website',
+        'thumbnail'
+    ];
+
+    // Return filtered list
     if(type)
         return await WorkModel.findAll({
+            attributes: _attributes,
             where: {
-                type: type
+                category: type
             }
         });
+
+    // Return full list
     else
-        return await WorkModel.findAll();
+        return await WorkModel.findAll({
+            attributes: _attributes
+        });
 }
 
 async function addWork(params) {
