@@ -1,0 +1,16 @@
+{
+  "name": "works_api",
+  "version": "1.0.0",
+  "description": "",
+  "main": "api.js",
+  "scripts": {
+    "node": "node api.js"
+  },
+  "author": "Malik Tillman",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.17.1",
+    "mysql2": "^2.1.0",
+    "sequelize": "^6.3.4"
+  }
+}
