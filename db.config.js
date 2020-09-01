@@ -1,10 +1,10 @@
 /* Database configuration todo: retrieve info from env variables*/
 module.exports = {
-    HOST: "us-cdbr-east-02.cleardb.com",
-    USER: "b690328a58ef91",
+    HOST: process.env.WorksDB_HOST,
+    USER: process.env.WorksDB_USER,
     PORT: 213,
-    PASSWORD: "213e9cf2",
-    DB: "heroku_229de97a5633e50",
+    PASSWORD: process.env.WorksDB_PASSWORD,
+    DB: process.env.WorksDB,
     dialect: "mysql",
     pool: {
         max: 10,
@@ -13,5 +13,3 @@ module.exports = {
         idle: 10000
     }
 };
-
-// mysql://b690328a58ef91:213e9cf2@us-cdbr-east-02.cleardb.com/heroku_229de97a5633e50?reconnect=true
