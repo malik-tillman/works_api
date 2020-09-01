@@ -2,7 +2,7 @@
 module.exports = {
     HOST: process.env.WorksDB_HOST,
     USER: process.env.WorksDB_USER,
-    PORT: 213,
+    PORT: 3306,
     PASSWORD: process.env.WorksDB_PASSWORD,
     DB: process.env.WorksDB,
     dialect: "mysql",

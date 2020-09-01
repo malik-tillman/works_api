@@ -173,5 +173,5 @@ const transposeURIs = ( uriCodes ) => {
 }
 
 app.listen(3000, () => {
-    console.log(`Application listening at http://localhost:3000/`);
+    console.log(`Here goes nothing 🔥`);
 })
