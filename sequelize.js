@@ -3,6 +3,7 @@ const config = require('./db.config');
 const { Sequelize, DataTypes } = require('sequelize');
 const sequelize = new Sequelize(config.DB, config.USER, config.PASSWORD, {
     host: config.HOST,
+    port: config.PORT,
     dialect: config.dialect,
     pool: {
         max: config.pool.max,
