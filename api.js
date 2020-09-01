@@ -1,106 +1,91 @@
 const express = require('express');
-
-const { db, RootModel, WorkModel} = require('./sequelize');
-
+const cors = require('cors');
+const { db, RootModel, WorkModel, Op} = require('./sequelize');
 const app = express();
 
-// ----- MIDDLEWARE
+let sessionHits = 0;
 
-/**
- * Parses incoming requests with JSON payloads; Injects into `req.body` based on `body-parser`
- * */
 app.use(express.json());
+
+app.use(cors());
 
 db.sequelize.sync({ force: false }).then(() => {
     console.log("Database synced");
 });
 
-// ----- Root route
-
-// ----- Works list route
-
-/**
- * Returns a list of works based on the LIST model from the database in JSON.
- * */
 app.get('/works?-list', (req, res) => {
     getWorksList().then((works) => {
         res.send(works);
     })
+
+    console.log(++sessionHits)
 })
 
-/**
- * Returns a list of works filtered by the TYPE attribute based on the LIST model from the database in JSON.
- * */
 app.get('/works?-list/:type', (req, res) => {
-    getWorksList(req.params.type).then((works) => {
+    getWorksList(req.params.type.split(',')).then((works) => {
         res.send(works);
     })
+
+    console.log(++sessionHits)
 })
 
-// ----- Works item routes
+app.get('/works?-list_by-ids/:id', (req, res) => {
+    getWorksListByIDs(req.params.id.split(',')).then((works) => {
+        res.send(works);
+    })
 
-/**
- * Returns a work item based on the ITEM model
- * */
-app.get('/works?/:id', (req, res) => {
+    console.log(++sessionHits)
+})
+
+app.get('/works?/:id', ( req, res ) => {
     getWork(req.params.id).then((work) => {
         res.send(work);
     })
+
+    console.log(++sessionHits)
 })
 
-/**
- * Add new work item; retrieves JSON
- * */
-app.post('/works?/', (req, res) => {
+app.post('/works?/', ( req, res ) => {
     addWork(req.body).then((id) => {
         res.send(`Add new work item based on the ID parameter. ID passed ${ id }`);
     });
 
     console.log( req.body );
+
+    console.log(++sessionHits)
 })
 
-/**
- * Update work item; retrieves JSON
- * */
-app.patch('/works?/:id', (req, res) => {
+app.patch('/works?/:id', ( req, res ) => {
     res.send(`Add new work item based on the ID parameter. ID passed: ${ req.params.id }`);
 
     console.log(req.body);
+
+    console.log(++sessionHits)
 })
 
-/**
- * Sets work item to hidden; Paranoid removes from table if parameter set
- * */
-app.delete('/works?/:id', (req, res) => {
+app.delete('/works?/:id', ( req, res ) => {
     removeWork(req.params.id).then(() => {
         res.send(`Add new work item based on the ID parameter. ID passed: ${ req.params.id }`);
     })
 
     console.log(req.body);
+
+    console.log(++sessionHits)
 })
 
-/**
- * Returns metadata pertaining to the API based on the METADATA model, such as health and analytics.
- * */
-app.get('/', (req, res) => {
+app.get('/', ( req, res ) => {
     res.send('Returns metadata pertaining to API, such as health.');
+
+    console.log(++sessionHits)
 })
 
-/**
- * Tells the api to update the root route metadata.
- * */
-app.patch('/', (req, res) => {
+app.patch('/', ( req, res ) => {
     res.send(`Updates API's metadata.`);
+
+    console.log(++sessionHits)
 })
 
-/**
- * Listen for connections
- * */
-app.listen(3000, () => {
-    console.log(`Application listening at http://localhost:3000/`);
-})
-
-async function getWork(id) {
+const getWork = async ( id ) => {
     return await WorkModel.findOne({
         where: {
             id: id
@@ -108,7 +93,8 @@ async function getWork(id) {
     });
 }
 
-async function getWorksList(type) {
+async function getWorksList( type ) {
+    // Tree-shake attributes
     const _attributes = [
         'id',
         'hidden',
@@ -121,13 +107,11 @@ async function getWorksList(type) {
         'thumbnail'
     ];
 
-    // Return filtered list
+    // Return filtered list by type
     if(type)
         return await WorkModel.findAll({
             attributes: _attributes,
-            where: {
-                category: type
-            }
+            where: { category: type }
         });
 
     // Return full list
@@ -137,23 +121,57 @@ async function getWorksList(type) {
         });
 }
 
-async function addWork(params) {
+async function getWorksListByIDs( ids ) {
+    // Tree-shake attributes
+    const _attributes = [
+        'id',
+        'hidden',
+        'name',
+        'category',
+        'tags',
+        'github',
+        'behance',
+        'website',
+        'thumbnail'
+    ];
+
+    // Return filtered list by ids
+    if(ids)
+        return await WorkModel.findAll({
+            attributes: _attributes,
+            where: { id: ids }
+        });
+
+    // Return full list
+    else
+        return await WorkModel.findAll({attributes: _attributes});
+}
+
+async function addWork( params ) {
+    //const newWork = await WorkModel.create({...params});
+
+    return newWork.id;
+}
+
+async function updateWorkItem( params ) {
     const newWork = await WorkModel.create({...params});
 
     return newWork.id;
 }
 
-async function updateWorkItem(params) {
-    const newWork = await WorkModel.create({...params});
-
-    return newWork.id;
+async function removeWork( id ) {
+    // await WorkModel.destroy({
+    //     where: {
+    //         id: id
+    //     },
+    //     force: true
+    // });
 }
 
-async function removeWork(id) {
-    await WorkModel.destroy({
-        where: {
-            id: id
-        },
-        force: true
-    });
+const transposeURIs = ( uriCodes ) => {
+
 }
+
+app.listen(3000, () => {
+    console.log(`Application listening at http://localhost:3000/`);
+})

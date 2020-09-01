@@ -43,6 +43,6 @@ module.exports = (sequelize, type) => {
     }, {
         tableName: 'works',
         paranoid: true,
-        timestamps: true
+        timestamps: false
     })
 }
