@@ -39,6 +39,9 @@ module.exports = (sequelize, type) => {
         },
         thumbnail: {
             type: type.STRING(255)
+        },
+        date: {
+            type: type.STRING(255)
         }
     }, {
         tableName: 'works',

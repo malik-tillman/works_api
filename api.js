@@ -104,7 +104,8 @@ async function getWorksList( type ) {
         'github',
         'behance',
         'website',
-        'thumbnail'
+        'thumbnail',
+        'date'
     ];
 
     // Return filtered list by type
@@ -132,7 +133,8 @@ async function getWorksListByIDs( ids ) {
         'github',
         'behance',
         'website',
-        'thumbnail'
+        'thumbnail',
+        'date'
     ];
 
     // Return filtered list by ids
